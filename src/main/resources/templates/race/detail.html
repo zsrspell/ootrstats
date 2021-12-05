@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base.html}">
+<head>
+    <title>ootrstats</title>
+</head>
+<body>
+<main layout:fragment="content">
+    <div class="frame">
+        <h1 class="frame__heading" th:text="${race.name}">Race name</h1>
+
+        <table>
+            <tbody>
+            <tr>
+                <th style="text-align: left">Date:</th>
+                <td th:text="${#temporals.format(race.startedAt)}">OOT</td>
+            </tr>
+            <tr>
+                <th style="text-align: left">Game:</th>
+                <td th:text="${race.season.get.ruleset.game.name}">OOT</td>
+            </tr>
+            <tr>
+                <th style="text-align: left">Season:</th>
+                <td th:text="${race.season.get.fullName}">OOT</td>
+            </tr>
+            <tr th:if="${race.match} != null">
+                <th style="text-align: left">Tournament:</th>
+                <td th:text="${race.match.get.stage.tournament.name}"></td>
+            </tr>
+            <tr th:if="${race.match} != null">
+                <th style="text-align: left">Stage:</th>
+                <td th:text="${race.match.get.stage.name}"></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <h3>Description</h3>
+        <p th:if="${race.description.isPresent}"
+           th:utext="${#markdown.parse(race.description.get)}">Description for the race.</p>
+
+        <h2 th:text="${entrants.size} + ' Entrants'">Entrants</h2>
+        <table class="table">
+            <thead class="table__header">
+            <tr>
+                <th class="table__column--small">#</th>
+                <th class="table__column--primary">Name</th>
+                <th>Finish time</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr class="table__row" th:each="entrant, pos: ${entrants}">
+                <td th:if="${entrant.finishTime.isPresent}" th:text="${pos.count}">0</td>
+                <td th:if="${entrant.finishTime.isEmpty}"></td>
+                <td>
+                    <a th:href="${#mvc.url('SC#speedrunnerDetail').arg(0, entrant.speedrunner.name).build()}"
+                       th:text="${entrant.speedrunner.name}">Name</a>
+                </td>
+                <td th:if="${entrant.finishTime.isPresent}" th:text="${entrant.finishTime.get}">Finish time</td>
+                <td th:if="${entrant.finishTime.isEmpty}">DNF</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>

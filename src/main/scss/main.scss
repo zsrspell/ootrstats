@@ -1,0 +1,63 @@
+@import "abstracts/colors";
+@import "base/global";
+@import "base/headings";
+@import "base/links";
+@import "components/button";
+@import "components/frame";
+@import "components/search";
+@import "components/table";
+@import "layout/main";
+@import "layout/header";
+@import "layout/navigation";
+@import "layout/form";
+
+.home {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  color: inherit;
+}
+
+.wordmark {
+  font-size: 20pt;
+  margin-left: 0.25em;
+}
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navigation {
+  margin: 0.5em;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  align-items: center;
+}
+
+.navigation li {
+  margin: 0.5em;
+}
+
+.navigation li a {
+  text-decoration: none;
+}
+
+.auth-status {
+  margin: 1em;
+}
+
+.error-list {
+  list-style: none;
+  padding: 0;
+}
+
+.error {
+  border: 2px solid crimson;
+  background-color: orangered;
+  color: white;
+  font-weight: 600;
+  padding: 0.25em;
+}

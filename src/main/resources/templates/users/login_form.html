@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base.html}">
+<head>
+    <title>login - ootrstats</title>
+</head>
+<body>
+<main layout:fragment="content">
+    <div class="frame frame--narrow">
+        <h1 class="frame__heading">Log in</h1>
+
+        <p>Are you new here? <a th:href="${#mvc.url('UC#registrationForm').build()}">Sign up here.</a></p>
+
+        <p>Forgot your password? <a href="https://discord.gg/Uc9T5VvAYE">Ask for help on our Discord!</a></p>
+
+        <form name="f" th:action="${#mvc.url('UC#loginForm').build()}" method="post">
+            <div th:if="${param.error}" class="alert alert-error">
+                Invalid username and password.
+            </div>
+            <div th:if="${param.logout}" class="alert alert-success">
+                You have been logged out.
+            </div>
+
+            <div class="form-field">
+                <label id="username-label" class="form-field__label" for="username-input">Username:</label>
+                <input id="username-input" class="form-field__input" type="text" name="username"
+                       required maxlength="32" autofocus/>
+            </div>
+
+            <div class="form-field">
+                <label id="password-label" class="form-field__label" for="password-input">Password:</label>
+                <input id="password-input" class="form-field__input" type="password" name="password" required/>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="button form-actions__button">Log in</button>
+            </div>
+        </form>
+    </div>
+</main>
+</body>
+</html>

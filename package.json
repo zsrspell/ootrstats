@@ -1,0 +1,15 @@
+{
+  "name": "ootrstats",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "watch": "sass --watch src/main/scss/main.scss src/main/resources/static/style.css"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "sass": "^1.44.0"
+  }
+}

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base.html}">
+<head>
+    <title>ootrstats</title>
+</head>
+<body>
+<main layout:fragment="content">
+    <div class="frame">
+        <h1 class="frame__heading">Import Racetime race</h1>
+
+        <form method="post" th:action="${#mvc.url('RC#importRacetimeRace').build()}" th:object="${form}">
+            <ul th:if="${#fields.hasGlobalErrors()}" class="error-list">
+                <li th:each="e: ${#fields.globalErrors()}" th:text="${e}" class="error">Form error.</li>
+            </ul>
+
+            <div class="form-field">
+                <label class="form-field__label" for="name">Title:</label>
+                <input type="text" id="name" class="form-field__input"
+                       minlength="4" maxlength="128" required autofocus
+                       th:field="*{name}">
+            </div>
+
+            <div class="form-field">
+                <label class="form-field__label" for="slug">Slug:</label>
+                <input type="text" id="slug" class="form-field__input"
+                       required th:field="*{slug}">
+                <div>
+                    <strong>For example:</strong>
+                    <pre style="display: inline-block">ootr/crazy-bongobongo-1337</pre>
+                </div>
+            </div>
+
+            <div class="form-field">
+                <label class="form-field__label" for="season">Season:</label>
+                <select class="form-field__input" id="season" required th:field="*{seasonId}">
+                    <option th:each="s: ${seasons}" th:value="${s.id}" th:text="${s.name}">Season</option>
+                </select>
+            </div>
+
+            <div class="form-field">
+                <label class="form-field__label" for="stage">Tournament stage:</label>
+                <select class="form-field__input" id="stage" th:field="*{stageId}">
+                    <option th:each="s: ${stages}" th:value="${s.id}" th:text="${s.name}">Stage</option>
+                </select>
+            </div>
+
+            <button class="button" type="submit">Import</button>
+        </form>
+    </div>
+</main>
+</body>
+</html>

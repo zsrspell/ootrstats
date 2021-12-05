@@ -1,0 +1,13 @@
+.search {
+  display: flex;
+  flex-direction: row;
+  margin: 0;
+
+  color: $color-accent-fg;
+  border: 1px solid $color-border-default;
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+  }
+}

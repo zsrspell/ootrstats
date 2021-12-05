@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base.html}">
+<head>
+    <title>ootrstats</title>
+</head>
+<body>
+<main layout:fragment="content">
+    <div class="frame">
+        <h1>Speedrunner Merge Results</h1>
+
+        <div th:if="${conflicts.size > 0}">
+
+        </div>
+
+        <ul th:if="${succeeded.size > 0}">
+            <li th:each="s : ${succeeded}" th:text="${s.name}"></li>
+        </ul>
+    </div>
+</main>
+</body>
+</html>

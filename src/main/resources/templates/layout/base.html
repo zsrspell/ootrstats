@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<!-- @formatter:off -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <title>ootrstats</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="../../static/style.css" th:href="@{/style.css}" rel="stylesheet" type="text/css">
+
+    <link rel="apple-touch-icon" sizes="180x180" th:href="@{/apple-touch-icon.png}">
+    <link rel="icon" type="image/png" sizes="32x32" th:href="@{/favicon-32x32.png}">
+    <link rel="icon" type="image/png" sizes="16x16" th:href="@{/favicon-16x16.png}">
+    <link rel="manifest" th:href="@{/site.webmanifest}">
+</head>
+<!-- @formatter:on -->
+
+<body>
+<header>
+    <nav>
+        <ul class="navigation">
+            <li>
+                <a class="home" th:href="@{/}">
+                    <img th:src="@{/images/logo.png}" alt="logo" width="40" height="40">
+                    <span class="wordmark">ootrstats</span>
+                </a>
+            </li>
+            <li><a th:href="${#mvc.url('RC#raceList').build()}">races</a></li>
+            <li><a th:href="${#mvc.url('SC#speedrunnerList').build()}">speedrunners</a></li>
+            <li><a th:href="@{/}">tournaments</a></li>
+            <li><a th:href="@{/}">rulesets &amp; seasons</a></li>
+        </ul>
+
+        <div class="auth-status" sec:authorize="isAuthenticated()">
+            <p>signed in as <span sec:authentication="name">spell</span></p>
+            <ul class="navigation">
+                <li><a th:href="@{/users/logout}">log out</a></li>
+            </ul>
+        </div>
+        <div class="auth-status" sec:authorize="!isAuthenticated()">
+            <ul class="navigation">
+                <li><a th:href="${#mvc.url('UC#loginForm').build()}">log in</a></li>
+                <li><a th:href="${#mvc.url('UC#registrationForm').build()}">register</a></li>
+            </ul>
+        </div>
+    </nav>
+</header>
+
+<main layout:fragment="content">
+
+</main>
+
+<footer>
+    <p>ootrstats &copy; 2021 Spell</p>
+</footer>
+</body>
+</html>

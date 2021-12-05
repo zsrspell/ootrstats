@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base.html}">
+<head>
+    <title>speedrunners - ootrstats</title>
+</head>
+<body>
+<main layout:fragment="content">
+
+    <div class="frame">
+        <h1 class="frame__heading">Speedrunners</h1>
+
+        <form method="get" th:object="${search}">
+            <fieldset class="search">
+                <legend>Search</legend>
+                <div class="search__field">
+                    <label for="search-name">Name:</label>
+                    <input id="search-name" type="text" name="name" th:field="*{name}" autofocus>
+                </div>
+            </fieldset>
+        </form>
+
+        <p class="pagination" th:if="${speedrunners.totalPages} > 1">
+            Page <span th:text="${speedrunners.number+1}">1</span> of <span th:text="${speedrunners.totalPages}">10</span>.
+        </p>
+        <p class="pagination" th:if="${speedrunners.totalPages} <= 1">
+            Showing all <span th:text="${speedrunners.numberOfElements}">0</span> results.
+        </p>
+
+        <table class="table">
+            <thead class="table__header">
+            <tr>
+                <th class="table__column--primary">Name</th>
+                <th>Country</th>
+                <th>Races Entered</th>
+                <th>Last Race</th>
+            </tr>
+            </thead>
+
+            <tbody class="table__body">
+            <tr class="table__row" th:each="s: ${speedrunners}">
+                <td><a th:href="${#mvc.url('SC#speedrunnerDetail').arg(0, s.name).build()}"
+                       th:text="${s.name}">Name</a></td>
+                <td th:text="${s.countryCode}">US</td>
+                <td th:text="${s.racesEntered}">10</td>
+                <td th:text="${#temporals.format(s.lastRaceDate)}">1 January</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <p class="pagination" th:if="${speedrunners.totalPages} > 1">
+            Page <span th:text="${speedrunners.number+1}">1</span> of <span th:text="${speedrunners.totalPages}">10</span>.
+        </p>
+        <p class="pagination" th:if="${speedrunners.totalPages} <= 1">
+            Showing all <span th:text="${speedrunners.numberOfElements}">0</span> results.
+        </p>
+    </div>
+</main>
+</body>
+</html>

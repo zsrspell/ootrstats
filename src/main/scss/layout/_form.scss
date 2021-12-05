@@ -1,0 +1,35 @@
+label {
+  font-size: 11pt;
+  color: $color-fg-default;
+}
+
+input {
+  color: $color-fg-default;
+  border: 1px solid $color-border-default;
+  background-color: $color-bg-default;
+  font-size: 13pt;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+
+  &__label {
+    margin: 3px;
+  }
+
+  &__input {
+    font-size: 16pt;
+    padding: 8px 15px;
+  }
+
+  &__error {
+    color: $color-error-fg;
+  }
+}
+
+.form-actions {
+  .form-actions__button {
+  }
+}

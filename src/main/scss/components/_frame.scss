@@ -1,0 +1,22 @@
+.frame {
+  box-sizing: border-box;
+  padding: 20px;
+  margin: 50px;
+
+  background-color: lighten(#0d1117, 5%);
+  border-top: 5px solid;
+  border-image-slice: 1;
+  border-image-source: linear-gradient(to right, darken($color-accent-fg, 30%), $color-accent-fg);
+
+  &--narrow {
+    max-width: 500px;
+    width: 500px;
+    align-self: center;
+    margin: 50px 0;
+  }
+
+  &__heading {
+    margin: 0 0 20px;
+    color: $color-accent-fg;
+  }
+}

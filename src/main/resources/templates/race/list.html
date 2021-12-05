@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base.html}">
+<head>
+    <title>ootrstats</title>
+</head>
+<body>
+<main layout:fragment="content">
+    <div class="frame">
+        <h1 class="frame__heading">Races</h1>
+
+        <table class="table">
+            <thead class="table__header">
+            <tr>
+                <th>Name</th>
+                <th>Entrants</th>
+                <th>Finish Time</th>
+                <th>Game</th>
+                <th>Ruleset</th>
+                <th>Tournament</th>
+                <th>Stage</th>
+                <th>Date</th>
+            </tr>
+            </thead>
+
+            <tbody class="table__body">
+            <tr class="table__row" th:each="r: ${races}">
+                <td><a th:href="${#mvc.url('RC#raceDetail').arg(0, r.id).build()}"
+                       th:text="${r.name}">Name</a></td>
+                <td th:text="${r.entrantCount}">1337</td>
+                <td th:text="${r.finishTime}">1:33:07.331</td>
+                <td th:text="${r.gameName}">OoTR</td>
+                <td th:text="${r.rulesetName}">Standard S1</td>
+                <td th:text="${r.tournamentName}">TSG Challenge Cup S5</td>
+                <td th:text="${r.stageName}">Qualifiers</td>
+                <td th:text="${#temporals.format(r.startedAt)}">1:00:00</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>

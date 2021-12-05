@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base.html}">
+<head>
+    <title>register - ootrstats</title>
+</head>
+<body>
+<main layout:fragment="content">
+    <div class="frame frame--narrow">
+        <h1 class="frame__heading">Sign up</h1>
+
+        <p>Already have an account? <a th:href="${#mvc.url('UC#loginForm').build()}">Click here to log in.</a></p>
+
+        <form th:action="${#mvc.url('UC#processRegistrationForm').build()}"
+              method="post" th:object="${form}">
+            <ul th:if="${#fields.hasGlobalErrors()}" class="error-list">
+                <li th:each="e: ${#fields.globalErrors()}" th:text="${e}" class="error">Form error.</li>
+            </ul>
+
+            <div class="form-field">
+                <div class="form-field__error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">
+                    Username validation error.
+                </div>
+
+                <label id="username-label" for="username-input" class="form-field__label">Username</label>
+                <input id="username-input" type="text" class="form-field__input"
+                       th:field="*{username}" required minlength="4" maxlength="32"
+                       th:autofocus="*{#strings.isEmpty(username) || #fields.hasErrors('username')}"/>
+            </div>
+
+            <div class="form-field">
+                <div class="form-field__error" th:if="${#fields.hasErrors('emailAddress')}" th:errors="*{emailAddress}">
+                    Email address validation error.
+                </div>
+
+                <label id="email-label" for="email-input" class="form-field__label">Email address</label>
+                <input id="email-input" type="email" class="form-field__input"
+                       th:field="*{emailAddress}" required
+                       th:autofocus="*{#strings.isEmpty(emailAddress) || #fields.hasErrors('emailAddress')}"/>
+            </div>
+
+            <div class="form-field">
+                <div class="form-field__error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">
+                    Password validation error.
+                </div>
+
+                <label id="password-label" for="password-input" class="form-field__label">Password</label>
+                <input id="password-input" type="password" class="form-field__input"
+                       th:field="*{password}" required
+                       th:autofocus="*{#strings.isEmpty(password) || #fields.hasErrors('password')}"/>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="button form-actions__button">Register</button>
+            </div>
+        </form>
+    </div>
+</main>
+</body>
+</html>

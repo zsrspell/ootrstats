@@ -1,0 +1,12 @@
+body {
+  font-family: 'Open Sans', sans-serif;
+  height: 100vh;
+  margin: 0;
+
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  grid-auto-rows: auto;
+
+  color: $color-fg-default;
+  background-color: $color-bg-default;
+}

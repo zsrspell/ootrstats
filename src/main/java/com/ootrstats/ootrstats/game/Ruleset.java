@@ -4,6 +4,7 @@ import org.hibernate.annotations.NaturalId;
 import org.springframework.lang.NonNull;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -16,7 +17,7 @@ public class Ruleset {
     @Column(name = "id", nullable = false, updatable = false)
     private Long id;
 
-    @Column(name = "name", nullable = false, length = 32)
+    @Column(name = "name", nullable = false, length = 64)
     private String name;
 
     @Column(name = "short_name", nullable = false, length = 8)
@@ -26,11 +27,11 @@ public class Ruleset {
     private String slug;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "game_id", nullable = false)
+    @JoinColumn(name = "game_id", referencedColumnName = "id", nullable = false)
     private Game game;
 
     @OneToMany(mappedBy = "ruleset", fetch = FetchType.LAZY)
-    private Set<Season> seasons;
+    private Set<Season> seasons = new HashSet<>();
 
     public Ruleset() {
     }
@@ -81,5 +82,14 @@ public class Ruleset {
 
     public void setGame(@NonNull Game game) {
         this.game = Objects.requireNonNull(game);
+    }
+
+    @NonNull
+    public Set<Season> getSeasons() {
+        return seasons;
+    }
+
+    public void setSeasons(@NonNull Set<Season> seasons) {
+        this.seasons = seasons;
     }
 }

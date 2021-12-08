@@ -16,7 +16,7 @@ public class Game {
     @Column(name = "id", nullable = false, updatable = false)
     private Long id;
 
-    @Column(name = "name", length = 64, nullable = false)
+    @Column(name = "name", length = 128, nullable = false)
     private String name;
 
     @Column(name = "short_name", length = 8, nullable = false)

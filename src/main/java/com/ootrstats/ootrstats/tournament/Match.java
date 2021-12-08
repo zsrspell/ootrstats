@@ -5,9 +5,17 @@ import org.springframework.lang.NonNull;
 
 import javax.persistence.*;
 import java.util.Objects;
+import java.util.Optional;
 
 @Entity
 @Table(name = "matches")
+@NamedEntityGraph(
+        name = "Match.subtypes",
+        attributeNodes = {
+                @NamedAttributeNode("groupMatch"),
+                @NamedAttributeNode("bracketMatch"),
+        }
+)
 public class Match {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,32 +26,44 @@ public class Match {
     @JoinColumn(name = "stage_id", nullable = false)
     private Stage stage;
 
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "race_id", referencedColumnName = "id", nullable = false)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "race_id", referencedColumnName = "id")
     private Race race;
 
-    public Match() {
+    @OneToOne(mappedBy = "match")
+    private GroupMatch groupMatch;
+
+    @OneToOne(mappedBy = "match")
+    private BracketMatch bracketMatch;
+
+    protected Match() {
     }
 
-    public Match(@NonNull Stage stage, @NonNull Race race) {
+    public Match(@NonNull Stage stage) {
         this.stage = Objects.requireNonNull(stage);
-        this.race = Objects.requireNonNull(race);
+    }
+
+    public Match(@NonNull Stage stage, Race race) {
+        this.stage = Objects.requireNonNull(stage);
+        this.race = race;
     }
 
     public Long getId() {
         return id;
     }
 
+    @NonNull
     public Stage getStage() {
         return stage;
     }
 
-    public void setStage(Stage stage) {
-        this.stage = stage;
+    public void setStage(@NonNull Stage stage) {
+        this.stage = Objects.requireNonNull(stage);
     }
 
-    public Race getRace() {
-        return race;
+    @NonNull
+    public Optional<Race> getRace() {
+        return Optional.ofNullable(race);
     }
 
     public void setRace(Race race) {

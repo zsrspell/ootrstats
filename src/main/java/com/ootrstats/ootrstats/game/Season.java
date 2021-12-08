@@ -21,7 +21,7 @@ public class Season {
     private long name;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "ruleset_id", nullable = false)
+    @JoinColumn(name = "ruleset_id", referencedColumnName = "id", nullable = false)
     private Ruleset ruleset;
 
     @OneToMany(mappedBy = "season", fetch = FetchType.LAZY)

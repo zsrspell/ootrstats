@@ -20,20 +20,17 @@ public class UserService {
     }
 
     public Optional<User> findByUsername(@NonNull String username) {
-        Objects.requireNonNull(username);
-        return users.findUserByUsername(username);
+        return users.findUserByUsername(Objects.requireNonNull(username));
     }
 
     public User createUser(@NonNull String username, @NonNull String emailAddress, @NonNull String password) throws UserExistsException {
-        Objects.requireNonNull(username);
-        Objects.requireNonNull(emailAddress);
-        Objects.requireNonNull(password);
-
-        if (users.existsByUsernameOrEmailAddress(username, emailAddress)) {
-            throw new UserExistsException("This username and/or email address already in use.");
+        if (users.existsByUsernameOrEmailAddress(
+                Objects.requireNonNull(username),
+                Objects.requireNonNull(emailAddress))) {
+            throw new UserExistsException("This username and/or email address are already in use.");
         }
 
-        password = passwordEncoder.encode(password);
+        password = passwordEncoder.encode(Objects.requireNonNull(password));
         var user = new User(username, emailAddress, password);
         user.setEnabled(true);
         return users.save(user);

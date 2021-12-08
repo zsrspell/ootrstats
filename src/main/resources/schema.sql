@@ -44,16 +44,16 @@ CREATE TABLE IF NOT EXISTS team_members
 CREATE TABLE IF NOT EXISTS games
 (
     id         bigserial PRIMARY KEY,
-    name       varchar(64) NOT NULL,
-    short_name varchar(8)  NOT NULL,
-    slug       varchar(8)  NOT NULL UNIQUE
+    name       varchar(128) NOT NULL,
+    short_name varchar(8)   NOT NULL,
+    slug       varchar(8)   NOT NULL UNIQUE
 );
 
 CREATE TABLE IF NOT EXISTS rulesets
 (
     id         bigserial PRIMARY KEY,
     game_id    bigint      NOT NULL REFERENCES games (id) ON DELETE CASCADE ON UPDATE CASCADE,
-    name       varchar(32) NOT NULL,
+    name       varchar(64) NOT NULL,
     short_name varchar(8)  NOT NULL,
     slug       varchar(8)  NOT NULL,
     UNIQUE (game_id, slug)
@@ -87,12 +87,36 @@ CREATE TABLE IF NOT EXISTS tournaments
 CREATE TABLE IF NOT EXISTS stages
 (
     id            bigserial PRIMARY KEY,
-    tournament_id bigint REFERENCES tournaments (id) ON DELETE CASCADE ON UPDATE CASCADE
+    tournament_id bigint REFERENCES tournaments (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    name          varchar(16) NOT NULL,
+    slug          varchar(8)  NOT NULL,
+    UNIQUE (tournament_id, slug)
 );
 
 CREATE TABLE IF NOT EXISTS qualifier_stages
 (
-    stage_id bigint PRIMARY KEY UNIQUE REFERENCES stages (id) ON DELETE CASCADE ON UPDATE CASCADE
+    id       bigserial PRIMARY KEY,
+    stage_id bigint NOT NULL UNIQUE REFERENCES stages (id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS group_stages
+(
+    id       bigserial PRIMARY KEY,
+    stage_id bigint NOT NULL UNIQUE REFERENCES stages (id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS bracket_stages
+(
+    id       bigserial PRIMARY KEY,
+    stage_id bigint NOT NULL UNIQUE REFERENCES stages (id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS brackets
+(
+    id                    bigserial PRIMARY KEY,
+    bracket_stage_id      bigint      NOT NULL REFERENCES bracket_stages (stage_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    relegation_bracket_id bigint REFERENCES brackets (id) ON DELETE SET NULL ON UPDATE CASCADE,
+    name                  varchar(32) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS matches
@@ -100,6 +124,23 @@ CREATE TABLE IF NOT EXISTS matches
     id       bigserial PRIMARY KEY,
     stage_id bigint NOT NULL REFERENCES stages (id) ON DELETE CASCADE ON UPDATE CASCADE,
     race_id  bigint REFERENCES races (id) ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS group_matches
+(
+    id             bigserial PRIMARY KEY,
+    match_id       bigint     NOT NULL UNIQUE REFERENCES matches (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    group_stage_id bigint     NOT NULL REFERENCES group_stages (stage_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    group_name     varchar(2) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS bracket_matches
+(
+    id          bigserial PRIMARY KEY,
+    match_id    bigint NOT NULL UNIQUE REFERENCES matches (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    bracket_id  bigint NOT NULL REFERENCES brackets (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    match_index int    NOT NULL,
+    UNIQUE (bracket_id, match_index)
 );
 
 CREATE TABLE IF NOT EXISTS entrants

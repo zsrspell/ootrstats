@@ -44,8 +44,8 @@ public interface RaceRepository extends PagingAndSortingRepository<Race, Long>, 
                 JOIN s.ruleset rs
                 JOIN rs.game g
                 LEFT OUTER JOIN r.match m
-                JOIN m.stage st
-                JOIN st.tournament t
+                LEFT OUTER JOIN m.stage st
+                LEFT OUTER JOIN st.tournament t
             GROUP BY r.id, r.name, rs.shortName, g.shortName, s.name, t.name, st.name""")
     Page<RaceInfo> findAllWithStats(Pageable pageable);
 

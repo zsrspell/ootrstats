@@ -18,7 +18,7 @@ public class Season {
     private Long id;
 
     @Column(name = "name", nullable = false)
-    private long name;
+    private int name;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ruleset_id", referencedColumnName = "id", nullable = false)
@@ -30,7 +30,7 @@ public class Season {
     public Season() {
     }
 
-    public Season(long name, @NonNull Ruleset ruleset) {
+    public Season(int name, @NonNull Ruleset ruleset) {
         this.name = name;
         this.ruleset = Objects.requireNonNull(ruleset);
     }
@@ -39,11 +39,11 @@ public class Season {
         return id;
     }
 
-    public long getName() {
+    public int getName() {
         return name;
     }
 
-    public void setName(long name) {
+    public void setName(int name) {
         this.name = name;
     }
 

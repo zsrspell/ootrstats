@@ -3,13 +3,12 @@ package com.ootrstats.ootrstats.race;
 import com.ootrstats.ootrstats.game.GameService;
 import com.ootrstats.ootrstats.race.forms.RacetimeImportForm;
 import com.ootrstats.ootrstats.racetime.RacetimeService;
-import com.ootrstats.ootrstats.racetime.RacetimeUser;
-import com.ootrstats.ootrstats.racetime.exceptions.RacetimeStatusException;
+import com.ootrstats.ootrstats.racetime.api.RacetimeUser;
 import com.ootrstats.ootrstats.speedrunner.Speedrunner;
 import com.ootrstats.ootrstats.speedrunner.SpeedrunnerService;
 import com.ootrstats.ootrstats.speedrunner.exceptions.ImportConflictException;
-import com.ootrstats.ootrstats.tournament.Match;
 import com.ootrstats.ootrstats.tournament.TournamentService;
+import org.apache.commons.csv.CSVFormat;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -18,8 +17,10 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -71,7 +72,6 @@ public class RaceController {
         model.addAttribute("stages", stages);
         return "race/racetime_import_form";
     }
-
 
     @PostMapping("/import/racetime")
     public String importRacetimeRace(@ModelAttribute("form") @Valid RacetimeImportForm form,
@@ -140,4 +140,47 @@ public class RaceController {
             return importRacetimeRaceForm(model);
         }
     }
+
+    @GetMapping("/import/csv")
+    public String importCsvForm(Model model) {
+        return "race/csv_import_form";
+    }
+
+    @PostMapping("/import/csv")
+    public String importCsv(Model model,
+                            @RequestParam("file") MultipartFile file) throws Exception {
+        var reader = new InputStreamReader(file.getInputStream());
+        var records = CSVFormat.RFC4180.withFirstRecordAsHeader().parse(reader);
+
+        for (var record : records) {
+            var categorySlug = record.get("category_slug");
+            var raceSlug = record.get("race_slug");
+            var name = record.get("name");
+            var gameSlug = record.get("game");
+            var rulesetSlug = record.get("ruleset");
+            var seasonName = Integer.parseInt(record.get("season"));
+            var tournamentSlug = record.get("tournament");
+            var stageSlug = record.get("stage");
+
+            // Grab our required entities first.
+            var seasonOptional = gameService.findSeason(gameSlug, rulesetSlug, seasonName);
+            var stageOptional = tournamentService.findStage(tournamentSlug, stageSlug);
+
+            // Fetch the race from Racetime.gg
+            var raceOptional = racetimeService.getRace(categorySlug, raceSlug);
+            var racetimeRace = raceOptional.orElseThrow();
+
+            for (var entrant : racetimeRace.getEntrants()) {
+                var user = entrant.getUser();
+                speedrunnerService.importRacetimeUser(user);
+            }
+
+            var season = seasonOptional.orElseThrow();
+            var race = raceService.importRacetimeRace(racetimeRace, season, name);
+            stageOptional.ifPresent(stage -> tournamentService.createMatch(stage, race));
+        }
+
+        return "redirect:/races";
+    }
 }
+

@@ -1,6 +1,6 @@
 package com.ootrstats.ootrstats.speedrunner;
 
-import com.ootrstats.ootrstats.racetime.RacetimeUser;
+import com.ootrstats.ootrstats.racetime.api.RacetimeUser;
 import com.ootrstats.ootrstats.speedrunner.exceptions.ImportConflictException;
 import com.ootrstats.ootrstats.speedrunner.projections.SpeedrunnerInfo;
 import org.springframework.data.domain.Page;

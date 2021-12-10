@@ -1,4 +1,4 @@
-package com.ootrstats.ootrstats.racetime;
+package com.ootrstats.ootrstats.racetime.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;

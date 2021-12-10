@@ -66,11 +66,11 @@ public class Speedrunner {
     public Speedrunner(@NonNull String name,
                        @NonNull String racetimeId,
                        @NonNull String racetimeName,
-                       @NonNull String twitchChannel) {
+                       String twitchChannel) {
         this.name = Objects.requireNonNull(name);
         this.racetimeId = Objects.requireNonNull(racetimeId);
         this.racetimeName = Objects.requireNonNull(racetimeName);
-        this.twitchChannel = Objects.requireNonNull(twitchChannel);
+        this.twitchChannel = twitchChannel;
     }
 
     public Long getId() {

@@ -4,7 +4,7 @@ import com.ootrstats.ootrstats.game.Season;
 import com.ootrstats.ootrstats.race.projections.EntrantInfo;
 import com.ootrstats.ootrstats.race.projections.RaceHistory;
 import com.ootrstats.ootrstats.race.projections.RaceInfo;
-import com.ootrstats.ootrstats.racetime.RacetimeRace;
+import com.ootrstats.ootrstats.racetime.api.RacetimeRaceDetail;
 import com.ootrstats.ootrstats.speedrunner.Speedrunner;
 import com.ootrstats.ootrstats.speedrunner.SpeedrunnerRepository;
 import org.springframework.data.domain.Page;
@@ -47,13 +47,13 @@ public class RaceService {
         return entrants.findAllByRaceWithProfile(Objects.requireNonNull(race), Sort.by("finishTime", "name"));
     }
 
-    public Race importRacetimeRace(@NonNull RacetimeRace racetimeRace, @NonNull Season season) throws Exception {
+    public Race importRacetimeRace(@NonNull RacetimeRaceDetail racetimeRace, @NonNull Season season) throws Exception {
         return importRacetimeRace(racetimeRace, season, racetimeRace.getName());
     }
 
 
     @Transactional
-    public Race importRacetimeRace(@NonNull RacetimeRace racetimeRace, @NonNull Season season, String name) throws Exception {
+    public Race importRacetimeRace(@NonNull RacetimeRaceDetail racetimeRace, @NonNull Season season, String name) throws Exception {
         Objects.requireNonNull(racetimeRace);
 
         if (name == null || name.isEmpty()) {

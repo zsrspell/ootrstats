@@ -76,6 +76,35 @@ CREATE TABLE IF NOT EXISTS races
     started_at  timestamp with time zone NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS racetime_imports
+(
+    id            bigserial PRIMARY KEY,
+    category_slug varchar(16)  NOT NULL,
+    race_slug     varchar(255) NOT NULL,
+    race_id       bigint REFERENCES races (id) ON DELETE SET NULL ON UPDATE CASCADE,
+    checksum      varchar(8)   NOT NULL,
+    recorded      boolean      NOT NULL DEFAULT false,
+    import_date   timestamp with time zone,
+    UNIQUE (category_slug, race_slug)
+);
+
+CREATE TABLE IF NOT EXISTS racetime_speedrunner_conflicts
+(
+    id             bigserial PRIMARY KEY,
+    racetime_id    varchar(32)   NOT NULL UNIQUE,
+    name           varchar(64)   NOT NULL,
+    full_name      varchar(64)   NOT NULL,
+    twitch_channel varchar(32),
+    speedrunner_id bigint UNIQUE NOT NULL REFERENCES speedrunners (id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS racetime_race_import_conflicts
+(
+    import_id   bigint NOT NULL REFERENCES racetime_imports (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    conflict_id bigint NOT NULL REFERENCES racetime_speedrunner_conflicts (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    PRIMARY KEY (import_id, conflict_id)
+);
+
 CREATE TABLE IF NOT EXISTS tournaments
 (
     id         bigserial PRIMARY KEY,

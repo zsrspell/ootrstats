@@ -1,5 +1,9 @@
 package com.ootrstats.ootrstats.racetime;
 
+import com.ootrstats.ootrstats.racetime.api.RacetimeRace;
+import com.ootrstats.ootrstats.racetime.api.RacetimeRaceDetail;
+import com.ootrstats.ootrstats.racetime.api.RacetimeRacePage;
+import com.ootrstats.ootrstats.racetime.api.RacetimeUser;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -31,16 +36,38 @@ public class RacetimeService {
     }
 
     @NonNull
-    @Cacheable(value = "racetime_races", unless = "#result == null || #result.inProgress == true")
-    public Optional<RacetimeRace> getRace(@NonNull String category, @NonNull String slug) {
+    @Cacheable(value = "racetime_races", unless = "#result == null || #result.importable == true")
+    public Optional<RacetimeRaceDetail> getRace(@NonNull String category, @NonNull String slug) {
         try {
-            ResponseEntity<RacetimeRace> response = template.getForEntity(
+            var response = template.getForEntity(
                     String.format("/%s/%s/data", Objects.requireNonNull(category), Objects.requireNonNull(slug)),
-                    RacetimeRace.class);
+                    RacetimeRaceDetail.class);
 
             return Optional.ofNullable(response.getBody());
         } catch (Exception e) {
             return Optional.empty();
         }
+    }
+
+    @NonNull
+    public RacetimeRacePage getRacesByCategory(@NonNull String categorySlug, int page) throws Exception {
+        var response = template.getForEntity(
+                String.format("/%s/races/data?page=%d", Objects.requireNonNull(categorySlug), page),
+                RacetimeRacePage.class
+        );
+
+        if (response.getStatusCode() == HttpStatus.OK && response.hasBody()) {
+            var body = response.getBody();
+            if (body != null) {
+                return body;
+            }
+        }
+
+        throw new Exception("Empty response");
+    }
+
+    public Iterable<RacetimeRace> getLatestRaces(@NonNull String categorySlug) throws Exception {
+        var races = getRacesByCategory(categorySlug, 1);
+        return races.getRaces();
     }
 }

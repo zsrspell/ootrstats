@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base.html}">
+<head>
+    <title>import csv - ootrstats</title>
+</head>
+<body>
+<main layout:fragment="content">
+    <div class="frame">
+        <h1>Import CSV</h1>
+        <form th:action="${#mvc.url('RC#importCsv').build()}" method="post" enctype="multipart/form-data">
+            <div class="form-field">
+                <label for="csv-file" class="form-field__label">CSV File:</label>
+                <input id="csv-file" name="file" type="file">
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="button">Submit</button>
+            </div>
+        </form>
+    </div>
+</main>
+</body>
+</html>

@@ -24,4 +24,8 @@ public class GameService {
     public Iterable<SeasonNamesOnly> findAllSeasonNames() {
         return seasons.findAllSeasonNames();
     }
+
+    public Optional<Season> findSeason(String gameSlug, String rulesetSlug, int season) {
+        return seasons.findByNameAndRulesetSlugAndRulesetGameSlug(season, rulesetSlug, gameSlug);
+    }
 }

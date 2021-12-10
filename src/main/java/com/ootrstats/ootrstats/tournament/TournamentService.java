@@ -22,6 +22,10 @@ public class TournamentService {
         return stages.findById(id);
     }
 
+    public Optional<Stage> findStage(String tournamentSlug, String stageSlug) {
+        return stages.findBySlugAndTournamentSlug(stageSlug, tournamentSlug);
+    }
+
     public Iterable<StageNameOnly> findAllStages() {
         return stages.findAll(StageNameOnly.class);
     }

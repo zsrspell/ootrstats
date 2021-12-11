@@ -28,4 +28,8 @@ public class GameService {
     public Optional<Season> findSeason(String gameSlug, String rulesetSlug, int season) {
         return seasons.findByNameAndRulesetSlugAndRulesetGameSlug(season, rulesetSlug, gameSlug);
     }
+
+    public Optional<Ruleset> findRuleset(String gameSlug, String rulesetSlug) {
+        return rulesets.findByGameSlugAndSlug(gameSlug, rulesetSlug);
+    }
 }

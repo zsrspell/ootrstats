@@ -1,16 +1,24 @@
 package com.ootrstats.ootrstats.game;
 
 import org.hibernate.annotations.NaturalId;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.lang.NonNull;
 
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 @Entity
 @Table(name = "rulesets",
         uniqueConstraints = @UniqueConstraint(columnNames = {"game_id", "slug"}))
+@NamedEntityGraph(
+        name = "Ruleset.seasons",
+        attributeNodes = {
+                @NamedAttributeNode("seasons")
+        }
+)
 public class Ruleset {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -91,5 +99,11 @@ public class Ruleset {
 
     public void setSeasons(@NonNull Set<Season> seasons) {
         this.seasons = seasons;
+    }
+
+    public Optional<Season> getSeason(int name) {
+        return seasons.stream()
+                .filter(s -> s.getName() == name)
+                .findFirst();
     }
 }

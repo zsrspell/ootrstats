@@ -19,11 +19,11 @@ public interface RaceRepository extends PagingAndSortingRepository<Race, Long>, 
     @Query("""
             SELECT r FROM Race r
                 LEFT OUTER JOIN FETCH r.match m
-                JOIN FETCH m.stage st 
-                JOIN FETCH st.tournament t 
-                JOIN FETCH r.season s 
+                LEFT OUTER JOIN FETCH m.stage st
+                LEFT OUTER JOIN FETCH st.tournament t
+                JOIN FETCH r.season s
                 JOIN FETCH s.ruleset rs
-                JOIN FETCH rs.game g 
+                JOIN FETCH rs.game g
             WHERE r.id = :id
             """)
     <T> Optional<T> findByIdWithSeasonAndTournament(@Param("id") long id, Class<T> type);

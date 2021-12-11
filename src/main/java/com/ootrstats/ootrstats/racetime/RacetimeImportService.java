@@ -3,6 +3,7 @@ package com.ootrstats.ootrstats.racetime;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ootrstats.ootrstats.game.GameService;
+import com.ootrstats.ootrstats.game.Season;
 import com.ootrstats.ootrstats.race.Race;
 import com.ootrstats.ootrstats.race.RaceService;
 import com.ootrstats.ootrstats.racetime.api.RacetimeRaceDetail;
@@ -18,7 +19,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.OffsetDateTime;
+import java.time.*;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.CRC32;
 
@@ -76,7 +78,6 @@ public class RacetimeImportService {
         var entrants = race.getEntrants();
         for (var entrant : entrants) {
             var user = entrant.getUser();
-
             try {
                 var speedrunner = speedrunnerService.importRacetimeUser(user);
             } catch (ImportConflictException e) {
@@ -93,6 +94,75 @@ public class RacetimeImportService {
                 conflict.getImports().add(racetimeImport);
                 conflicts.save(conflict);
             }
+        }
+    }
+
+    protected Optional<Season> guessRaceSeason(RacetimeRaceDetail race) {
+        var goal = race.getGoal().getName().toLowerCase();
+        var info = race.getInfo().toLowerCase();
+        var startedAt = race.getStartedAt();
+
+        // Grab our rulesets+seasons in advance:
+        var standard = gameService.findRuleset("ootr", "standard").orElseThrow();
+        var scrubs = gameService.findRuleset("ootr", "scrubs");
+        var rsl = gameService.findRuleset("ootr", "rsl");
+        var sgl = gameService.findRuleset("ootr", "sgl");
+
+        if (rsl.isPresent()
+                && (goal.equals("random settings league") || info.contains("random settings") || info.contains("rsl "))) {
+            // Almost certainly RSL, but what season?
+            // Thanks for making this easy Xopar, lol
+            var season3End = LocalDateTime.of(2021, 10, 29, 0, 0);
+            var season2End = LocalDateTime.of(2021, 3, 15, 0, 0);
+            var season1End = LocalDateTime.of(2020, 9, 3, 0, 0);
+
+            if (startedAt.isBefore(season1End.toInstant(ZoneOffset.UTC))) {
+                return rsl.get().getSeason(1);
+            } else if (startedAt.isBefore(season2End.toInstant(ZoneOffset.UTC))) {
+                return rsl.get().getSeason(2);
+            } else if (startedAt.isBefore(season3End.toInstant(ZoneOffset.UTC))) {
+                return rsl.get().getSeason(3);
+            } else {
+                return rsl.get().getSeason(4);
+            }
+        }
+
+        if (scrubs.isPresent() && info.contains("scrubs")) {
+            var season1End = LocalDateTime.of(2020, 6, 1, 0, 0);
+            var season2End = LocalDateTime.of(2021, 6, 1, 0, 0);
+
+            // It's probably a scrubs race, but what season?
+            if (startedAt.isBefore(season1End.toInstant(ZoneOffset.UTC))) {
+                return scrubs.get().getSeason(1);
+            } else if (startedAt.isBefore(season2End.toInstant(ZoneOffset.UTC))) {
+                return scrubs.get().getSeason(2);
+            } else {
+                return scrubs.get().getSeason(3);
+            }
+        }
+
+        if (sgl.isPresent() && (info.contains("sgl") || info.contains("sglive"))) {
+            // probably SGL settings
+            var season2020End = LocalDateTime.of(2021, 9, 1, 0, 0);
+
+            if (startedAt.isBefore(season2020End.toInstant(ZoneOffset.UTC))) {
+                return sgl.get().getSeason(2020);
+            } else {
+                return sgl.get().getSeason(2021);
+            }
+        }
+
+        // These dates are based on announcements of race mods when they want to start testing settings.
+        var season4End = LocalDateTime.of(2020, 10, 11, 0, 0);
+        var season3End = LocalDateTime.of(2019, 10, 1, 0, 0);
+
+        // At this point we might as well assume it's standard.
+        if (info.contains("s3") || startedAt.isBefore(season3End.toInstant(ZoneOffset.UTC))) {
+            return standard.getSeason(3);
+        } else if (info.contains("s4") || startedAt.isBefore(season4End.toInstant(ZoneOffset.UTC))) {
+            return standard.getSeason(4);
+        } else {
+            return standard.getSeason(5); // What else could it be?
         }
     }
 
@@ -119,8 +189,7 @@ public class RacetimeImportService {
         }
 
         var checksum = Long.toHexString(calculateRaceChecksum(race));
-        // TODO: Algorithm that tries to figure out the ruleset and season.
-        var season = gameService.findSeason("ootr", "standard", 5);
+        var season = guessRaceSeason(race);
 
         var importedRace = raceService.importRacetimeRace(race, season.orElseThrow(), race.getName());
         racetimeImport.setRace(importedRace);
@@ -143,9 +212,9 @@ public class RacetimeImportService {
         }
     }
 
-    private AtomicInteger pageCounter = new AtomicInteger(515);
+    private AtomicInteger pageCounter = new AtomicInteger(0);
 
-    @Scheduled(fixedRateString = "PT5M")
+    @Scheduled(fixedRateString = "PT5S")
     protected void importLatestRaces() throws Exception {
         var importedCategory = "ootr";
 

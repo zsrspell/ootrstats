@@ -26,11 +26,11 @@
                 <th style="text-align: left">Season:</th>
                 <td th:text="${race.season.get.fullName}">OOT</td>
             </tr>
-            <tr th:if="${race.match} != null">
+            <tr th:if="${race.match.isPresent}">
                 <th style="text-align: left">Tournament:</th>
                 <td th:text="${race.match.get.stage.tournament.name}"></td>
             </tr>
-            <tr th:if="${race.match} != null">
+            <tr th:if="${race.match.isPresent}">
                 <th style="text-align: left">Stage:</th>
                 <td th:text="${race.match.get.stage.name}"></td>
             </tr>
